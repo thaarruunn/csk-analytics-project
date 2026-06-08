@@ -9,7 +9,8 @@
 
 
 
-# Understanding the Success and Decline of CSK (2018–2026)
+# Understanding the Success and Decline of CSK 
+(2018–2026)
 > A data analytics project , where i analyzed what made Chennai Super Kings win, what declined, and what the data suggests for a rebuild.
 
 ---
