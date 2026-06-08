@@ -36,12 +36,32 @@ GitHub
 The Power BI dashboard includes:
 
 ->Executive Summary / Introduction to the analysis
+
+![Executive Summary](executive-summary-introduction.png)
+
 ->Batting Analysis
+
+![Batting Analysis](batting-analysis.png)
+
 ->Bowling Analysis
+
+![Bowling Analysis](bowling-analysis.png)
+
 ->Spin vs Pace Analysis
+
+![Spin Analysis](spin-analysis.png)
+
 ->Venue Analysis
+
+![Chepauk Analysis](chepauk-analysis.png)
+
 ->Match Control Analysis
+
+![Match Control](match-control-win-probabilities.png)
+
 ->Final Conclusions & Recommendations
+
+![Final Conclusions](final-conclusions-and-recommendations.png)
 
 Author:
 
