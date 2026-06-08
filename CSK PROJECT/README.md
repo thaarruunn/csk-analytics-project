@@ -26,7 +26,8 @@ This is not a dashboard project. The goal is to use data to tell a story.
 
 ## Workflow 
 
-<img width="2398" height="417" alt="image" src="https://github.com/user-attachments/assets/aa933089-7f59-4784-86cd-cc997032faef" />
+<img width="1166" height="178" alt="Screenshot 2026-06-08 232439" src="https://github.com/user-attachments/assets/f8489f6f-d7b2-4864-b218-df58bc958b7a" />
+
 
 
 ---
