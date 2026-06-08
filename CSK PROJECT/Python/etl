@@ -12,8 +12,7 @@ DB_CONFIG = {
 }
  
 
-JSON_FOLDER= r"C:\Users\titan\OneDrive\Desktop\JSON DATA\2026"  # ← change this to your actual path
- 
+JSON_FOLDER= r"C:\Users\titan\OneDrive\Desktop\JSON DATA\2026"  
  
 # ─────────────────────────────────────────────
 # 2.  CREATE TABLES  (run once; safe to re-run)
@@ -31,7 +30,7 @@ CREATE TABLE IF NOT EXISTS dim_player (
 );
  
 CREATE TABLE IF NOT EXISTS dim_match (
-    match_id        VARCHAR(50)  PRIMARY KEY,   -- filename without .json
+    match_id        VARCHAR(50)  PRIMARY KEY,   
     season          VARCHAR(10),
     date            DATE,
     venue_id        INT,
@@ -49,11 +48,11 @@ CREATE TABLE IF NOT EXISTS dim_match (
 CREATE TABLE IF NOT EXISTS fact_deliveries (
     delivery_id     INT AUTO_INCREMENT PRIMARY KEY,
     match_id        VARCHAR(50),
-    innings_num     TINYINT,            -- 1 or 2
+    innings_num     TINYINT,            
     batting_team    VARCHAR(100),
     bowling_team    VARCHAR(100),
-    over_num        TINYINT,            -- 0-indexed (0 = over 1)
-    ball_num        TINYINT,            -- position in over list (1-based)
+    over_num        TINYINT,            
+    ball_num        TINYINT,           
     batter          VARCHAR(100),
     non_striker     VARCHAR(100),
     bowler          VARCHAR(100),
