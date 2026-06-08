@@ -57,7 +57,7 @@ The Power BI dashboard includes:
 
 ->Match Control Analysis
 
-![Match Control Win Probablities](match-control-win-probabilities.png)
+![Match Control](match-control-win-probabilities.png)
 
 ->Final Conclusions & Recommendations
 
