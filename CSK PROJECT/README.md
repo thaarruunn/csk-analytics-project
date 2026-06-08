@@ -1,19 +1,19 @@
 Understanding the success and decline of CSK between (2018-2026) using data.
 
-overview:
+(1)Overview:
 
 A data analytics project investigating the factors behind Chennai Super Kings' success and decline between 2018 and 2026 using IPL , ball by ball data.
 
 The project combines Python, MySQL and Power BI to identify the batting, bowling and venue related factors most associated with successful CSK seasons.
 
-tech stack used in this project:
+(2)Tech stack used in this project:
 
 Python (ETL & Data Cleaning)
 MySQL (Data Modelling & Analysis)
 Power BI (Dashboard & Visualization)
 GitHub
 
-key questions:
+(3)Key questions:
 
 ->What explains successful CSK seasons?
 ->Does batting explain success?
@@ -22,7 +22,7 @@ key questions:
 ->Importance of Chepauk in CSK's success
 -> What explains the decline after 2023?
 
-Key Findings:
+(4)Key Findings:
 
 ->Bowling explained season success more clearly than batting.
 ->Powerplay wickets were one of the strongest indicators of success.
@@ -31,7 +31,7 @@ Key Findings:
 ->Defending totals correlated more strongly with success than chasing totals.
 ->CSK's traditional spin dominance appears to have weakened in recent seasons.
 
-Dashboard:
+(5)Dashboard:
 
 The Power BI dashboard includes:
 
