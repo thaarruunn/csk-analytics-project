@@ -10,13 +10,13 @@
 
 
 # Understanding the Success and Decline of CSK (2018–2026)
-> A data analytics project investigating what made Chennai Super Kings win, what broke, and what the data says about a rebuild.
+> A data analytics project , where i analyzed what made Chennai Super Kings win, what declined, and what the data suggests for a rebuild.
 
 ---
 
 ## Overview
 
-Chennai Super Kings are one of the most successful franchises in IPL history — yet between 2024 and 2026, something broke. This project uses ball-by-ball IPL data to investigate the factors behind CSK's championship seasons, identify what changed during the decline, and generate evidence-based recommendations for the future.
+Chennai Super Kings are one of the most successful franchises in IPL history yet between 2018 and 2026, few things broke. This project uses ball-by-ball IPL data to investigate the factors behind CSK's championship seasons, identify what changed during the decline, and generate evidence-based recommendations for the future.
 
 This is not a dashboard project. The goal is to use data to tell a story.
 
@@ -28,8 +28,8 @@ This is not a dashboard project. The goal is to use data to tell a story.
 
 | Tool | Purpose |
 |------|---------|
-| Python | ETL, JSON parsing, data cleaning |
-| MySQL | Data modelling, star schema, SQL analytics |
+| Python | ETL, JSON parsing|
+| MySQL | Data modelling, star schema, SQL analytics , Data Cleaning |
 | Power BI | Dashboard design and visual storytelling |
 | GitHub | Documentation and portfolio |
 
@@ -37,11 +37,13 @@ This is not a dashboard project. The goal is to use data to tell a story.
 
 ## Key Questions
 
-- What separates CSK's winning seasons from their losing ones?
-- Does batting performance explain success or is it bowling?
+- What drives CSK's success?
+- What drives CSK's decline?
 - Has CSK lost its traditional spin advantage?
 - How important is Chepauk to CSK's identity?
-- What explains the collapse after 2023?
+- Does batting or bowling play a bigger role in successful seasons?
+- Has CSK's winning formula changed over time?
+- How important are powerplay wickets?
 
 ---
 
@@ -102,7 +104,7 @@ Ball by ball IPL data from [Cricsheet](https://cricsheet.org) in JSON format, co
 
 - Individual performances, injuries, and tactical decisions are not captured in ball-by-ball data
 - 2020, 2021, and 2022 seasons were not played at Chepauk, limiting venue analysis for those years
-- External factors (auction strategy, pitch conditions) were not analysed
+- External factors (auction strategy, pitch conditions,dressing room atmosphere , injuries) were not analysed
 - Analysis is scoped to CSK only
 
 ---
