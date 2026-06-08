@@ -9,71 +9,106 @@
 
 
 
-Understanding the success and decline of CSK between (2018-2026) using data.
+# Understanding the Success and Decline of CSK (2018–2026)
+> A data analytics project investigating what made Chennai Super Kings win, what broke, and what the data says about a rebuild.
 
-(1)Overview:
+---
 
-A data analytics project investigating the factors behind Chennai Super Kings' success and decline between 2018 and 2026 using IPL , ball by ball data.
+## Overview
 
-The project combines Python, MySQL and Power BI to identify the batting, bowling and venue related factors most associated with successful CSK seasons.
+Chennai Super Kings are one of the most successful franchises in IPL history — yet between 2024 and 2026, something broke. This project uses ball-by-ball IPL data to investigate the factors behind CSK's championship seasons, identify what changed during the decline, and generate evidence-based recommendations for the future.
 
-(2)Tech stack used in this project:
+This is not a dashboard project. The goal is to use data to tell a story.
 
-Python (ETL & Data Cleaning)
-MySQL (Data Modelling & Analysis)
-Power BI (Dashboard & Visualization)
-GitHub
+**131 matches | 9 seasons | 2018–2026**
 
-(3)Key questions:
+---
 
-->What explains successful CSK seasons?
-->Does batting explain success?
-->Does bowling explain success?
-->Has CSK lost its spin advantage?
-->Importance of Chepauk in CSK's success
--> What explains the decline after 2023?
+## Tech Stack
 
-(4)Key Findings:
+| Tool | Purpose |
+|------|---------|
+| Python | ETL, JSON parsing, data cleaning |
+| MySQL | Data modelling, star schema, SQL analytics |
+| Power BI | Dashboard design and visual storytelling |
+| GitHub | Documentation and portfolio |
 
-->Bowling explained season success more clearly than batting.
-->Powerplay wickets were one of the strongest indicators of success.
-->Successful teams consistently possessed elite bowling strengths.
-->Home advantage collapsed significantly in 2025.
-->Defending totals correlated more strongly with success than chasing totals.
-->CSK's traditional spin dominance appears to have weakened in recent seasons.
+---
 
-(5)Dashboard:
+## Key Questions
 
-The Power BI dashboard includes:
+- What separates CSK's winning seasons from their losing ones?
+- Does batting performance explain success — or is it bowling?
+- Has CSK lost its traditional spin advantage?
+- How important is Chepauk to CSK's identity?
+- What explains the collapse after 2023?
 
-->Executive Summary / Introduction to the analysis
+---
 
+## Key Findings
+
+**Bowling drives success more than batting.**
+Strong seasons (2018, 2021, 2023) all featured 90+ total wickets. The 2025 season marks CSK's biggest bowling collapse since 2018.
+
+**Powerplay wickets are the strongest single indicator of a title-contending season.**
+Every CSK season that reached the final had elite early wicket-taking ability.
+
+**Batting metrics alone don't predict outcomes.**
+2025 had a higher opening average than 2019 — yet was a significantly worse season. Batting numbers create a misleading picture without bowling context.
+
+**Home advantage at Chepauk collapsed in 2025.**
+CSK won only 1 of 4 home games (16.67% win rate), compared to a historical home win rate above 70% during title seasons.
+
+**Defending totals correlates more strongly with success than chasing.**
+CSK's identity is built around setting and defending competitive scores — not chasing.
+
+**Spin dominance has weakened, but not disappeared.**
+Spin economy has risen from 6.6 to 8.4 in recent seasons. CSK still bowl spin better than pace, but the margin that once defined Chepauk has narrowed significantly.
+
+---
+
+## Dashboard
+
+### Executive Summary
 ![Executive Summary](executive-summary-introduction.png)
 
-->Batting Analysis
-
+### Batting Analysis
 ![Batting Analysis](batting-analysis.png)
 
-->Bowling Analysis
-
+### Bowling Analysis
 ![Bowling Analysis](bowling-analysis.png)
 
-->Spin vs Pace Analysis
-
+### Spin vs Pace Analysis
 ![Spin Analysis](spin-analysis.png)
 
-->Venue Analysis
-
+### Venue Analysis — Importance of Chepauk
 ![Chepauk Analysis](chepauk-analysis.png)
 
-->Match Control Analysis
-
+### Match Control & Win Probabilities
 ![Match Control](win-probablities.png)
 
-->Final Conclusions & Recommendations
-
+### Final Conclusions & Recommendations
 ![Final Conclusions](final-conclusions-and-recommendations.png)
 
-Author:
+---
 
-Tharun Anand
+## Data Source
+
+Ball-by-ball IPL data from [Cricsheet](https://cricsheet.org) in JSON format, covering all CSK matches from 2018 to 2026.
+
+---
+
+## Project Limitations
+
+- Individual performances, injuries, and tactical decisions are not captured in ball-by-ball data
+- 2020, 2021, and 2022 seasons were not played at Chepauk, limiting venue analysis for those years
+- External factors (auction strategy, pitch conditions) were not analysed
+- Analysis is scoped to CSK only
+
+---
+
+## Author
+
+**Tharun Anand**  
+First-year Engineering Student | Aspiring Data / Analytics Engineer  
+[GitHub](https://github.com/your-username) · [LinkedIn](https://linkedin.com/in/your-profile)
