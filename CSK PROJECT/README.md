@@ -38,7 +38,7 @@ This is not a dashboard project. The goal is to use data to tell a story.
 ## Key Questions
 
 - What separates CSK's winning seasons from their losing ones?
-- Does batting performance explain success — or is it bowling?
+- Does batting performance explain success or is it bowling?
 - Has CSK lost its traditional spin advantage?
 - How important is Chepauk to CSK's identity?
 - What explains the collapse after 2023?
@@ -54,13 +54,13 @@ Strong seasons (2018, 2021, 2023) all featured 90+ total wickets. The 2025 seaso
 Every CSK season that reached the final had elite early wicket-taking ability.
 
 **Batting metrics alone don't predict outcomes.**
-2025 had a higher opening average than 2019 — yet was a significantly worse season. Batting numbers create a misleading picture without bowling context.
+2025 had a higher opening average than 2019 , yet was a significantly worse season. Batting numbers create a misleading picture without bowling context.
 
 **Home advantage at Chepauk collapsed in 2025.**
 CSK won only 1 of 4 home games (16.67% win rate), compared to a historical home win rate above 70% during title seasons.
 
 **Defending totals correlates more strongly with success than chasing.**
-CSK's identity is built around setting and defending competitive scores — not chasing.
+CSK's identity is built around setting and defending competitive scores not chasing.
 
 **Spin dominance has weakened, but not disappeared.**
 Spin economy has risen from 6.6 to 8.4 in recent seasons. CSK still bowl spin better than pace, but the margin that once defined Chepauk has narrowed significantly.
@@ -81,7 +81,7 @@ Spin economy has risen from 6.6 to 8.4 in recent seasons. CSK still bowl spin be
 ### Spin vs Pace Analysis
 ![Spin Analysis](spin-analysis.png)
 
-### Venue Analysis — Importance of Chepauk
+### Venue Analysis : Importance of Chepauk
 ![Chepauk Analysis](chepauk-analysis.png)
 
 ### Match Control & Win Probabilities
@@ -94,7 +94,7 @@ Spin economy has risen from 6.6 to 8.4 in recent seasons. CSK still bowl spin be
 
 ## Data Source
 
-Ball-by-ball IPL data from [Cricsheet](https://cricsheet.org) in JSON format, covering all CSK matches from 2018 to 2026.
+Ball by ball IPL data from [Cricsheet](https://cricsheet.org) in JSON format, covering all CSK matches from 2018 to 2026.
 
 ---
 
@@ -110,5 +110,4 @@ Ball-by-ball IPL data from [Cricsheet](https://cricsheet.org) in JSON format, co
 ## Author
 
 **Tharun Anand**  
-First-year Engineering Student | Aspiring Data / Analytics Engineer  
-[GitHub](https://github.com/your-username) · [LinkedIn](https://linkedin.com/in/your-profile)
+[GitHub](https://github.com/thaarruunn) · [LinkedIn](https://www.linkedin.com/in/tharun-a-1678b92b4/)
