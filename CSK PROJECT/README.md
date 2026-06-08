@@ -24,6 +24,12 @@ This is not a dashboard project. The goal is to use data to tell a story.
 
 ---
 
+## Workflow 
+
+{"type":"excalidraw/clipboard","workspaceId":"vYzGclTTxxiQ0yCp1JOq","elements":[{"id":"87a35ea9113634485d093153268a68de","modifiedAt":1780941150322,"modifiedBy":"ERASER","type":"freeform","userId":"MqU4aokd7cRdMMByFHGzJPIuWdv2","version":1,"x":449.91129302978516,"y":15,"diagramId":"P3PY-9FMMX8Xv0kG7vC-N","diagramEntityId":"mysql","isContainer":false,"freeform":{"icon":"database","tag":"Icon","texts":[{"text":"MySQL Database"}]},"compound":{"type":"parent","containerType":"freeform"},"width":50,"height":50,"seed":1839370811,"strokeColor":"#1c1c1c","backgroundColor":"transparent","fillStyle":"solid","strokeWidth":1,"strokeStyle":"solid","strokeSharpness":"round","opacity":100,"angle":0,"roughness":1,"shouldApplyRoughness":true,"isDeleted":false,"groupIds":[],"lockedGroupId":null,"containerId":null,"figureId":null,"zIndex":1}],"diagramMetadata":{"settings":{},"diagramType":"freeform-diagram","diagramId":"P3PY-9FMMX8Xv0kG7vC-N","entitySettings":{}}}
+
+---
+
 ## Tech Stack
 
 | Tool | Purpose |
