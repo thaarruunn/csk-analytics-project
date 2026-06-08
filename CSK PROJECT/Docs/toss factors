@@ -1,0 +1,35 @@
+#Toss Analysis
+
+#Toss Win Conversion Percentage
+
+| Season | Toss Wins | Toss Win + Match Win | Toss Win Conversion % |
+| ------ | --------- | -------------------- | --------------------- |
+| 2018   | 11        | 8                    | 72.73                 |
+| 2019   | 12        | 7                    | 58.33                 |
+| 2020   | 8         | 4                    | 50.00                 |
+| 2021   | 5         | 5                    | 100.00*               |
+| 2022   | 5         | 1                    | 20.00                 |
+| 2023   | 9         | 6                    | 66.67                 |
+| 2024   | 3         | 1                    | 33.33                 |
+| 2025   | 6         | 3                    | 50.00                 |
+| 2026   | 5         | 1                    | 20.00                 |
+
+*2021 should be verified, as the dataset currently shows no toss-win-and-match-loss records.
+
+observation:
+
+Winning the toss appears to provide a useful advantage in successful CSK seasons.
+
+Examples:
+
+* 2018 converted 72.73% of toss wins into victories.
+* 2023 converted 66.67% of toss wins into victories.
+* 2022 and 2026 converted only 20% of toss wins into victories.
+
+This suggests stronger CSK teams were better at capitalising on favourable match conditions after winning the toss.
+
+conclusion:
+
+The toss appears to influence match outcomes but is not a decisive factor on its own.
+
+Several matches were won despite losing the toss, indicating that overall team quality remains more important than the toss result itself.

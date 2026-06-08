@@ -1,0 +1,391 @@
+import json
+import os
+import mysql.connector
+from mysql.connector import Error
+ 
+
+DB_CONFIG = {
+    "host":     "localhost",
+    "user":     "root",
+    "password": "abpt@0805", 
+    "database": "csk_analytics",      
+}
+ 
+
+JSON_FOLDER= r"C:\Users\titan\OneDrive\Desktop\JSON DATA\2026"  # ← change this to your actual path
+ 
+ 
+# ─────────────────────────────────────────────
+# 2.  CREATE TABLES  (run once; safe to re-run)
+# ─────────────────────────────────────────────
+CREATE_TABLES_SQL = """
+CREATE TABLE IF NOT EXISTS dim_venue (
+    venue_id    INT AUTO_INCREMENT PRIMARY KEY,
+    venue_name  VARCHAR(255) NOT NULL UNIQUE,
+    city        VARCHAR(100)
+);
+ 
+CREATE TABLE IF NOT EXISTS dim_player (
+    player_id   INT AUTO_INCREMENT PRIMARY KEY,
+    player_name VARCHAR(100) NOT NULL UNIQUE
+);
+ 
+CREATE TABLE IF NOT EXISTS dim_match (
+    match_id        VARCHAR(50)  PRIMARY KEY,   -- filename without .json
+    season          VARCHAR(10),
+    date            DATE,
+    venue_id        INT,
+    batting_first   VARCHAR(100),
+    bowling_first   VARCHAR(100),
+    toss_winner     VARCHAR(100),
+    toss_decision   VARCHAR(20),
+    winner          VARCHAR(100),
+    win_by_runs     INT DEFAULT 0,
+    win_by_wickets  INT DEFAULT 0,
+    player_of_match VARCHAR(100),
+    FOREIGN KEY (venue_id) REFERENCES dim_venue(venue_id)
+);
+ 
+CREATE TABLE IF NOT EXISTS fact_deliveries (
+    delivery_id     INT AUTO_INCREMENT PRIMARY KEY,
+    match_id        VARCHAR(50),
+    innings_num     TINYINT,            -- 1 or 2
+    batting_team    VARCHAR(100),
+    bowling_team    VARCHAR(100),
+    over_num        TINYINT,            -- 0-indexed (0 = over 1)
+    ball_num        TINYINT,            -- position in over list (1-based)
+    batter          VARCHAR(100),
+    non_striker     VARCHAR(100),
+    bowler          VARCHAR(100),
+    runs_batter     TINYINT DEFAULT 0,
+    runs_extras     TINYINT DEFAULT 0,
+    runs_total      TINYINT DEFAULT 0,
+    extra_type      VARCHAR(20),        -- wide / noball / legbye / bye / NULL
+    extra_runs      TINYINT DEFAULT 0,
+    is_wicket       TINYINT DEFAULT 0,  -- 1 = yes
+    player_out      VARCHAR(100),
+    wicket_kind     VARCHAR(30),        -- caught / bowled / runout / etc.
+    fielder         VARCHAR(100),
+    phase           VARCHAR(20),        -- powerplay / middle / death
+    FOREIGN KEY (match_id) REFERENCES dim_match(match_id)
+);
+"""
+ 
+ 
+# ─────────────────────────────────────────────
+# 3.  HELPER FUNCTIONS
+# ─────────────────────────────────────────────
+ 
+def get_phase(over_num: int) -> str:
+    """Classify over into batting phase (0-indexed over number)."""
+    if over_num <= 5:
+        return "powerplay"
+    elif over_num <= 14:
+        return "middle"
+    else:
+        return "death"
+ 
+ 
+def get_or_create_venue(cursor, venue_name: str, city: str) -> int:
+    """Return venue_id, inserting if it doesn't exist yet."""
+    cursor.execute(
+        "SELECT venue_id FROM dim_venue WHERE venue_name = %s", (venue_name,)
+    )
+    row = cursor.fetchone()
+    if row:
+        return row[0]
+    cursor.execute(
+        "INSERT INTO dim_venue (venue_name, city) VALUES (%s, %s)",
+        (venue_name, city)
+    )
+    return cursor.lastrowid
+ 
+ 
+def ensure_player(cursor, name: str):
+    """Insert player if not already in dim_player."""
+    if not name:
+        return
+    cursor.execute(
+        "INSERT IGNORE INTO dim_player (player_name) VALUES (%s)", (name,)
+    )
+ 
+ 
+def parse_extras(delivery: dict) -> tuple:
+    """
+    Returns (extra_type, extra_runs).
+    A delivery may have at most one extras key with one type inside it.
+    If no extras, returns (None, 0).
+    """
+    extras_block = delivery.get("extras", {})
+    if not extras_block:
+        return None, 0
+    # extras_block looks like {"wides": 1} or {"legbyes": 1} etc.
+    extra_type = list(extras_block.keys())[0]   # e.g. "wides"
+    extra_runs = list(extras_block.values())[0]  # e.g. 1
+    return extra_type, extra_runs
+ 
+ 
+def parse_wicket(delivery: dict) -> tuple:
+    """
+    Returns (is_wicket, player_out, wicket_kind, fielder).
+    wickets key is a list; we only care about the first entry.
+    """
+    wickets = delivery.get("wickets", [])
+    if not wickets:
+        return 0, None, None, None
+    w = wickets[0]
+    player_out  = w.get("player_out")
+    wicket_kind = w.get("kind")
+    fielders    = w.get("fielders", [])
+    fielder     = fielders[0].get("name") if fielders else None
+    return 1, player_out, wicket_kind, fielder
+ 
+ 
+def determine_teams(innings_data: list) -> tuple:
+    """Returns (batting_first_team, bowling_first_team)."""
+    batting_first = innings_data[0]["team"]
+    bowling_first = innings_data[1]["team"] if len(innings_data) > 1 else None
+    return batting_first, bowling_first
+ 
+ 
+# ─────────────────────────────────────────────
+# 4.  PARSE ONE JSON FILE
+# ─────────────────────────────────────────────
+ 
+def parse_match(filepath: str) -> dict:
+    """
+    Reads one Cricsheet JSON file and returns a structured dict:
+    {
+        "match": { ...dim_match fields... },
+        "deliveries": [ { ...one row per ball... }, ... ]
+    }
+    """
+    with open(filepath, "r", encoding="utf-8") as f:
+        data = json.load(f)
+ 
+    info    = data["info"]
+    innings = data["innings"]
+ 
+    # ── match-level info ──────────────────────────────────────
+    match_id        = os.path.splitext(os.path.basename(filepath))[0]
+    season          = info.get("season", "")
+    date_str        = info["dates"][0]          # "2026-03-31"
+    venue_name      = info.get("venue", "")
+    city            = info.get("city", "")
+    toss_winner     = info["toss"]["winner"]
+    toss_decision   = info["toss"]["decision"]
+    outcome         = info.get("outcome", {})
+    winner          = outcome.get("winner")
+    win_by          = outcome.get("by", {})
+    win_by_runs     = win_by.get("runs", 0)
+    win_by_wickets  = win_by.get("wickets", 0)
+    pom_list        = info.get("player_of_match", [])
+    player_of_match = pom_list[0] if pom_list else None
+ 
+    batting_first, bowling_first = determine_teams(innings)
+ 
+    match_row = {
+        "match_id":        match_id,
+        "season":          season,
+        "date":            date_str,
+        "venue_name":      venue_name,
+        "city":            city,
+        "batting_first":   batting_first,
+        "bowling_first":   bowling_first,
+        "toss_winner":     toss_winner,
+        "toss_decision":   toss_decision,
+        "winner":          winner,
+        "win_by_runs":     win_by_runs,
+        "win_by_wickets":  win_by_wickets,
+        "player_of_match": player_of_match,
+    }
+ 
+    # ── delivery-level rows ───────────────────────────────────
+    delivery_rows = []
+ 
+    for innings_index, innings_obj in enumerate(innings):
+        innings_num  = innings_index + 1          # 1 or 2
+        batting_team = innings_obj["team"]
+ 
+        # bowling team = the other team
+        teams        = info["teams"]
+        bowling_team = teams[0] if teams[1] == batting_team else teams[1]
+ 
+        for over_obj in innings_obj["overs"]:
+            over_num = over_obj["over"]            # 0-indexed
+            phase    = get_phase(over_num)
+ 
+            for ball_index, delivery in enumerate(over_obj["deliveries"]):
+                ball_num    = ball_index + 1
+                batter      = delivery.get("batter")
+                non_striker = delivery.get("non_striker")
+                bowler      = delivery.get("bowler")
+                runs        = delivery.get("runs", {})
+ 
+                extra_type, extra_runs = parse_extras(delivery)
+                is_wicket, player_out, wicket_kind, fielder = parse_wicket(delivery)
+ 
+                delivery_rows.append({
+                    "match_id":     match_id,
+                    "innings_num":  innings_num,
+                    "batting_team": batting_team,
+                    "bowling_team": bowling_team,
+                    "over_num":     over_num,
+                    "ball_num":     ball_num,
+                    "batter":       batter,
+                    "non_striker":  non_striker,
+                    "bowler":       bowler,
+                    "runs_batter":  runs.get("batter", 0),
+                    "runs_extras":  runs.get("extras", 0),
+                    "runs_total":   runs.get("total", 0),
+                    "extra_type":   extra_type,
+                    "extra_runs":   extra_runs,
+                    "is_wicket":    is_wicket,
+                    "player_out":   player_out,
+                    "wicket_kind":  wicket_kind,
+                    "fielder":      fielder,
+                    "phase":        phase,
+                })
+ 
+    return {"match": match_row, "deliveries": delivery_rows}
+ 
+ 
+# ─────────────────────────────────────────────
+# 5.  LOAD INTO MYSQL
+# ─────────────────────────────────────────────
+ 
+def load_match(cursor, parsed: dict):
+    """Insert one match's data into dim_match and fact_deliveries."""
+    m = parsed["match"]
+ 
+    # dim_venue
+    venue_id = get_or_create_venue(cursor, m["venue_name"], m["city"])
+ 
+    # dim_match
+    cursor.execute("""
+        INSERT IGNORE INTO dim_match
+            (match_id, season, date, venue_id,
+             batting_first, bowling_first,
+             toss_winner, toss_decision,
+             winner, win_by_runs, win_by_wickets, player_of_match)
+        VALUES
+            (%s, %s, %s, %s,
+             %s, %s,
+             %s, %s,
+             %s, %s, %s, %s)
+    """, (
+        m["match_id"], m["season"], m["date"], venue_id,
+        m["batting_first"], m["bowling_first"],
+        m["toss_winner"], m["toss_decision"],
+        m["winner"], m["win_by_runs"], m["win_by_wickets"], m["player_of_match"],
+    ))
+ 
+    # dim_player  (insert every unique name encountered)
+    all_names = set()
+    for row in parsed["deliveries"]:
+        all_names.update([
+            row["batter"], row["non_striker"],
+            row["bowler"], row["player_out"], row["fielder"]
+        ])
+    for name in all_names:
+        if name:
+            ensure_player(cursor, name)
+ 
+    # fact_deliveries  (batch insert for speed)
+    delivery_insert = """
+        INSERT INTO fact_deliveries
+            (match_id, innings_num, batting_team, bowling_team,
+             over_num, ball_num, batter, non_striker, bowler,
+             runs_batter, runs_extras, runs_total,
+             extra_type, extra_runs,
+             is_wicket, player_out, wicket_kind, fielder,
+             phase)
+        VALUES
+            (%s, %s, %s, %s,
+             %s, %s, %s, %s, %s,
+             %s, %s, %s,
+             %s, %s,
+             %s, %s, %s, %s,
+             %s)
+    """
+    batch = [
+        (
+            d["match_id"], d["innings_num"], d["batting_team"], d["bowling_team"],
+            d["over_num"], d["ball_num"], d["batter"], d["non_striker"], d["bowler"],
+            d["runs_batter"], d["runs_extras"], d["runs_total"],
+            d["extra_type"], d["extra_runs"],
+            d["is_wicket"], d["player_out"], d["wicket_kind"], d["fielder"],
+            d["phase"],
+        )
+        for d in parsed["deliveries"]
+    ]
+    cursor.executemany(delivery_insert, batch)
+ 
+ 
+# ─────────────────────────────────────────────
+# 6.  MAIN  –  loops over all JSON files
+# ─────────────────────────────────────────────
+ 
+def main():
+    # Grab every .json file in the folder
+    json_files = [
+        os.path.join(JSON_FOLDER, f)
+        for f in os.listdir(JSON_FOLDER)
+        if f.endswith(".json")
+    ]
+ 
+    if not json_files:
+        print(f"No JSON files found in '{JSON_FOLDER}'. Check the path.")
+        return
+ 
+    print(f"Found {len(json_files)} JSON files. Connecting to MySQL...")
+ 
+    try:
+        conn   = mysql.connector.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+ 
+        # Create tables if they don't exist
+        for statement in CREATE_TABLES_SQL.strip().split(";"):
+            statement = statement.strip()
+            if statement:
+                cursor.execute(statement)
+        conn.commit()
+        print("Tables ready.")
+ 
+        loaded  = 0
+        skipped = 0
+        errors  = 0
+ 
+        for filepath in sorted(json_files):
+            filename = os.path.basename(filepath)
+            try:
+                parsed = parse_match(filepath)
+                load_match(cursor, parsed)
+                conn.commit()
+                loaded += 1
+                print(f"  ✓ {filename}  ({len(parsed['deliveries'])} deliveries)")
+ 
+            except json.JSONDecodeError:
+                print(f"  ✗ {filename}  — invalid JSON, skipped")
+                skipped += 1
+ 
+            except Exception as e:
+                conn.rollback()
+                print(f"  ✗ {filename}  — ERROR: {e}")
+                errors += 1
+ 
+        print(f"\nDone. Loaded: {loaded}  |  Skipped: {skipped}  |  Errors: {errors}")
+ 
+    except Error as e:
+        print(f"MySQL connection error: {e}")
+ 
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            print("Connection closed.")
+ 
+ 
+if __name__ == "__main__":
+    main()
+ 
