@@ -83,8 +83,7 @@ Spin economy has risen from 6.6 to 8.4 in recent seasons. CSK still bowl spin be
 ![Executive Summary](executive-summary-introduction.png)
 
 ### Batting Analysis
-![Batting Analysis](batting-analysis .png)
-
+![Batting Analysis](batting-analysis.png)
 ### Bowling Analysis
 ![Bowling Analysis](bowling-analysis.png)
 
